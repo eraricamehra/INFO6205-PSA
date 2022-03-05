@@ -1,10 +1,4 @@
-/**
- * Original code:
- * Copyright © 2000–2017, Robert Sedgewick and Kevin Wayne.
- * <p>
- * Modifications:
- * Copyright (c) 2017. Phasmid Software
- */
+
 package edu.neu.coe.info6205.union_find;
 
 import java.util.Arrays;
@@ -81,8 +75,12 @@ public class UF_HWQUPC implements UF {
     public int find(int p) {
         validate(p);
         int root = p;
-        // FIXME
-        // END 
+        while (root != parent[root]) {
+            if (this.pathCompression){
+            doPathCompression(root);
+            }
+            root = parent[root];
+        }
         return root;
     }
 
@@ -109,12 +107,14 @@ public class UF_HWQUPC implements UF {
      * @throws IllegalArgumentException unless
      *                                  both {@code 0 <= p < n} and {@code 0 <= q < n}
      */
-    public void union(int p, int q) {
+    public void union(int i, int j) {
         // CONSIDER can we avoid doing find again?
-        mergeComponents(find(p), find(q));
+        mergeComponents(find(i), find(j));
         count--;
     }
-
+    public int getcount(){
+        return count;
+    }
     @Override
     public int size() {
         return parent.length;
@@ -168,16 +168,28 @@ public class UF_HWQUPC implements UF {
     private int count;  // number of components
     private boolean pathCompression;
 
-    private void mergeComponents(int i, int j) {
-        // FIXME make shorter root point to taller one
-        // END 
+    private void mergeComponents(int p, int q) {
+        // TO BE IMPLEMENTED make shorter root point to taller one
+        int iRoot = find(p);
+        int jRoot = find(q);
+        if (iRoot != jRoot) {
+            if (height[iRoot] > height[jRoot]) {
+                updateParent(jRoot, iRoot);
+            } else if (height[iRoot] < height[jRoot]) {
+                updateParent(iRoot, jRoot);
+
+            } else {
+                updateParent(jRoot, iRoot);
+                updateHeight(iRoot,jRoot);
+            }
+
+        }
     }
 
     /**
      * This implements the single-pass path-halving mechanism of path compression
      */
     private void doPathCompression(int i) {
-        // FIXME update parent to value of grandparent
-        // END 
+        parent[i] =  parent[parent[i]];
     }
 }
